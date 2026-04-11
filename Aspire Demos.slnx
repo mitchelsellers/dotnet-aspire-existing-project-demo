@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/Asipre Demo/">
+    <Project Path="AspireDemoTemplate/AspireDemoTemplate.ApiService/AspireDemoTemplate.ApiService.csproj" />
+    <Project Path="AspireDemoTemplate/AspireDemoTemplate.AppHost/AspireDemoTemplate.AppHost.csproj" Id="84f92d70-e4e4-422e-aa06-e45f152d94cf" />
+    <Project Path="AspireDemoTemplate/AspireDemoTemplate.ServiceDefaults/AspireDemoTemplate.ServiceDefaults.csproj" />
+    <Project Path="AspireDemoTemplate/AspireDemoTemplate.Tests/AspireDemoTemplate.Tests.csproj" />
+    <Project Path="AspireDemoTemplate/AspireDemoTemplate.Web/AspireDemoTemplate.Web.csproj" />
+  </Folder>
+  <Folder Name="/Legacy Project/">
+    <Project Path="src/SampleRazorpages/SampleRazorpages.csproj" />
+    <Project Path="src/SampleWebApi/SampleWebApi.csproj" Id="95f795b6-2ded-49f3-8244-fe41ef5bfe54" />
+  </Folder>
+</Solution>
