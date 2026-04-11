@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Asipre Demo/">
+    <Project Path="ApiServiceSetupWorker/ApiServiceSetupWorker.csproj" />
     <Project Path="AspireDemoTemplate/AspireDemoTemplate.ApiService/AspireDemoTemplate.ApiService.csproj" />
     <Project Path="AspireDemoTemplate/AspireDemoTemplate.AppHost/AspireDemoTemplate.AppHost.csproj" Id="84f92d70-e4e4-422e-aa06-e45f152d94cf" />
     <Project Path="AspireDemoTemplate/AspireDemoTemplate.ServiceDefaults/AspireDemoTemplate.ServiceDefaults.csproj" />

@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.1.0">
+<Project Sdk="Aspire.AppHost.Sdk/13.2.2">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -9,6 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ApiServiceSetupWorker\ApiServiceSetupWorker.csproj" />
     <ProjectReference Include="..\AspireDemoTemplate.ApiService\AspireDemoTemplate.ApiService.csproj" />
     <ProjectReference Include="..\AspireDemoTemplate.Web\AspireDemoTemplate.Web.csproj" />
   </ItemGroup>
