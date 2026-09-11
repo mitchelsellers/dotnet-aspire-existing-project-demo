@@ -2,6 +2,16 @@ using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
+//Setup Emulated Blob Storage
+var storage = builder.AddAzureStorage("storage")
+    .RunAsEmulator();
+
+var blobsService = storage.AddBlobs("blobs");
+var imagesContainer = storage.AddBlobContainer("images", "images");
+
+//Easy additional parameter values!
+var apiKey = builder.AddParameter("my-api-key", secret: true);
+
 //Add SQL
 var sql = builder.AddSqlServer("sql")
     //.WithLifetime(ContainerLifetime.Persistent)
@@ -17,8 +27,11 @@ var apiService = builder.AddProject<Projects.AspireDemoTemplate_ApiService>("api
     .WithHttpHealthCheck("/health")
     .WithReference(sql)
     .WithReference(migrations)
+    .WithReference(blobsService)
+    .WithReference(imagesContainer)
     .WaitFor(sql)
-    .WaitFor(migrations);
+    .WaitFor(migrations)
+    .WaitFor(imagesContainer);
 
 builder.AddProject<Projects.AspireDemoTemplate_Web>("webfrontend")
     .WithExternalHttpEndpoints()
