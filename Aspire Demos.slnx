@@ -8,6 +8,7 @@
     <Project Path="AspireDemoTemplate/AspireDemoTemplate.Web/AspireDemoTemplate.Web.csproj" />
   </Folder>
   <Folder Name="/Legacy Project/">
+    <Project Path="src/ExistingBlazorApp/ExistingBlazorApp.csproj" />
     <Project Path="src/SampleRazorpages/SampleRazorpages.csproj" />
     <Project Path="src/SampleWebApi/SampleWebApi.csproj" Id="95f795b6-2ded-49f3-8244-fe41ef5bfe54" />
   </Folder>

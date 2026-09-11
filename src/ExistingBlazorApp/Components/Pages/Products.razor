@@ -1,0 +1,146 @@
+@page "/products"
+@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@inject IProductService ProductService
+
+<PageTitle>Products</PageTitle>
+
+<h1>Products</h1>
+
+<p>This page demonstrates EF Core persistence plus Hybrid Cache retrieval.</p>
+
+@if (!string.IsNullOrWhiteSpace(statusMessage))
+{
+    <div class="alert alert-info" role="alert">@statusMessage</div>
+}
+
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="alert alert-danger" role="alert">@errorMessage</div>
+}
+
+<div class="mb-3">
+    <button class="btn btn-outline-primary" @onclick="LoadProductsAsync">Reload Products</button>
+</div>
+
+@if (products is null)
+{
+    <p><em>Loading products...</em></p>
+}
+else if (products.Count == 0)
+{
+    <p>No products found.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th class="text-end">Price</th>
+                <th>Updated (UTC)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in products)
+            {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>@product.Description</td>
+                    <td class="text-end">@product.Price.ToString("C")</td>
+                    <td>@product.LastUpdatedUtc.ToString("u")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<h2 class="mt-4">Add Product</h2>
+
+<EditForm Model="newProduct" OnValidSubmit="HandleAddProductAsync">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label" for="name">Name</label>
+        <InputText id="name" class="form-control" @bind-Value="newProduct.Name" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label" for="description">Description</label>
+        <InputText id="description" class="form-control" @bind-Value="newProduct.Description" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label" for="price">Price</label>
+        <InputNumber id="price" class="form-control" @bind-Value="newProduct.Price" />
+    </div>
+
+    <button class="btn btn-success" type="submit">Save Product</button>
+</EditForm>
+
+@code {
+    private IReadOnlyList<ExistingBlazorApp.Models.Product>? products;
+    private ProductInputModel newProduct = new();
+    private string? statusMessage;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProductsAsync();
+    }
+
+    private async Task LoadProductsAsync()
+    {
+        errorMessage = null;
+        var started = DateTime.UtcNow;
+
+        try
+        {
+            products = await ProductService.GetProductsAsync();
+            var elapsed = (DateTime.UtcNow - started).TotalMilliseconds;
+            statusMessage = $"Loaded {products.Count} products in {elapsed:N0} ms. Repeat loads should be faster due to Hybrid Cache.";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unable to load products: {ex.Message}";
+        }
+    }
+
+    private async Task HandleAddProductAsync()
+    {
+        errorMessage = null;
+
+        try
+        {
+            await ProductService.AddProductAsync(new CreateProductRequest
+            {
+                Name = newProduct.Name,
+                Description = newProduct.Description,
+                Price = newProduct.Price
+            });
+
+            newProduct = new ProductInputModel();
+            statusMessage = "Product saved. Cache invalidated and data reloaded from database.";
+            await LoadProductsAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unable to save product: {ex.Message}";
+        }
+    }
+
+    private sealed class ProductInputModel
+    {
+        [Required]
+        [MaxLength(120)]
+        public string Name { get; set; } = string.Empty;
+
+        [MaxLength(1000)]
+        public string? Description { get; set; }
+
+        [Range(0.01, 100000)]
+        public decimal Price { get; set; } = 1;
+    }
+}
