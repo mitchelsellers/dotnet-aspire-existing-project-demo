@@ -4,13 +4,8 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 //Add SQL
 var sql = builder.AddSqlServer("sql")
+    //.WithLifetime(ContainerLifetime.Persistent)
     .AddDatabase("DefaultConnection", "sqldata");
-
-//Setup EF
-
-
-// Prevent constnat recycleing
-//     .WithLifetime(ContainerLifetime.Persistent);
 
 //Ensure DB Ready to go
 var migrations = builder.AddProject<Projects.ApiServiceSetupWorker>("migrations")
