@@ -1,0 +1,70 @@
+@page "/uploads"
+@rendermode InteractiveServer
+@inject IBlobStorageService BlobStorageService
+
+<PageTitle>Uploads</PageTitle>
+
+<h1>Uploads</h1>
+
+<p>Upload a file to Azure Blob Storage.</p>
+
+@if (!string.IsNullOrWhiteSpace(statusMessage))
+{
+    <div class="alert alert-success" role="alert">@statusMessage</div>
+}
+
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="alert alert-danger" role="alert">@errorMessage</div>
+}
+
+<InputFile OnChange="HandleFileSelectedAsync" />
+
+@if (uploads.Count > 0)
+{
+    <h2 class="mt-4">Recent Uploads</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>File</th>
+                <th>Blob Name</th>
+                <th>Blob URI</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in uploads)
+            {
+                <tr>
+                    <td>@item.OriginalFileName</td>
+                    <td>@item.BlobName</td>
+                    <td><a href="@item.BlobUri" target="_blank" rel="noopener noreferrer">@item.BlobUri</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private readonly List<UploadResult> uploads = [];
+    private string? statusMessage;
+    private string? errorMessage;
+
+    private async Task HandleFileSelectedAsync(InputFileChangeEventArgs eventArgs)
+    {
+        statusMessage = null;
+        errorMessage = null;
+
+        try
+        {
+            var file = eventArgs.File;
+            var result = await BlobStorageService.UploadAsync(file);
+
+            uploads.Insert(0, result);
+            statusMessage = $"Uploaded '{result.OriginalFileName}' to container successfully.";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Upload failed: {ex.Message}";
+        }
+    }
+}
